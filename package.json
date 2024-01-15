@@ -1,0 +1,24 @@
+{
+  "name": "go-rust",
+  "version": "1.0.0",
+  "description": "Invoking a Rust library from Go via CGO",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "null"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@gorules/zen-engine": "^0.14.0",
+    "@gorules/zen-engine-linux-x64-gnu": "^0.14.0"
+  }
+}
