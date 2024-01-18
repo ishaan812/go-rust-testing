@@ -30,5 +30,5 @@ typedef struct {
 } KeyValuePair;
 
 
-void hello(char *name);
+void gorules(char *name);
 char* evaluate(char *decisionContent, char *params);

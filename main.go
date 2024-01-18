@@ -1,7 +1,7 @@
 package main
 
 /*
-#cgo LDFLAGS: -L./lib -lgorules
+#cgo LDFLAGS: -L${SRCDIR}/lib -lgorules
 #include "./lib/gorules.h"
 */
 import "C"
