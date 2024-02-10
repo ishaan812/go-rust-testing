@@ -19,7 +19,9 @@ lib/target
 Cargo.lock
 
 # Project binary
-
+go-rust
+gorules.dll.lib
+libgorules.so
 lib/gorules/target
 node_modules
 package-lock.json

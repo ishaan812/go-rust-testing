@@ -1,7 +1,7 @@
 package main
 
 /*
-#cgo LDFLAGS: -L${SRCDIR}/lib -lgorules
+#cgo LDFLAGS: -L${SRCDIR}/lib -lgorules.dll
 #include "./lib/gorules.h"
 */
 import "C"
@@ -18,94 +18,65 @@ type DecisionGraphResponse struct {
 
 func main() {
 	const decision = `{
-		"contentType": "application/vnd.gorules.decision",
 		"nodes": [
 		  {
-			"id": "bdac87d8-af3d-46c0-b05f-991f2763305b",
+			"id": "9c391113-f1da-4ff5-a7e5-60ffdd085631",
 			"type": "inputNode",
 			"position": {
-			  "x": 150,
-			  "y": 160
+			  "x": 200,
+			  "y": 50
 			},
 			"name": "Request"
 		  },
 		  {
-			"id": "dc9ad02c-5b29-4494-9213-a7d1e96ef08d",
-			"type": "decisionTableNode",
-			"position": {
-			  "x": 480,
-			  "y": 130
-			},
-			"name": "decisionTableNode 1",
-			"content": {
-			  "hitPolicy": "first",
-			  "inputs": [
-				{
-				  "id": "2b061b2d-3305-4bdc-a4c9-74710d74521d",
-				  "name": "CashInflow",
-				  "type": "expression",
-				  "field": "MonthlyCashInflow",
-				  "defaultValue": "10"
-				}
-			  ],
-			  "outputs": [
-				{
-				  "field": "Level",
-				  "id": "5477a8a2-dc05-472c-a47f-237c2daf56da",
-				  "name": "Level",
-				  "type": "expression",
-				  "defaultValue": "Rich"
-				}
-			  ],
-			  "rules": [
-				{
-				  "_id": "a66bb70a-8faf-4b63-bfcb-db9fbd097427",
-				  "2b061b2d-3305-4bdc-a4c9-74710d74521d": ">5",
-				  "5477a8a2-dc05-472c-a47f-237c2daf56da": "\"Rich\""
-				},
-				{
-				  "_id": "44fb6341-218a-4037-af1f-2e11f627e91e",
-				  "2b061b2d-3305-4bdc-a4c9-74710d74521d": "<5",
-				  "5477a8a2-dc05-472c-a47f-237c2daf56da": "\"Not Rich\""
-				}
-			  ]
-			}
-		  },
-		  {
-			"id": "0b69293c-e0df-49a6-9f13-f33a7157e56e",
+			"id": "e68d88a3-573c-402f-81e8-872a6c4b85e2",
 			"type": "outputNode",
 			"position": {
-			  "x": 800,
-			  "y": 150
+			  "x": 760,
+			  "y": 80
 			},
 			"name": "Response"
+		  },
+		  {
+			"id": "c2a2a88e-cd09-4634-a1bd-95890c885b23",
+			"type": "functionNode",
+			"position": {
+			  "x": 500,
+			  "y": 10
+			},
+			"name": "functionNode 1",
+			"content": "/**\n * @param input\n * @param {{\n *  dayjs: import('dayjs')\n *  Big: import('big.js').BigConstructor\n * }} helpers\n */\nconst handler = (input, { dayjs, Big }) => {\n  let real_estate_amt = 0;\n  if (input?.user_accounts_summary?.real_estate > 0){\n    real_estate_amt = input?.user_accounts_summary?.real_estate\n  }\n  return {\"real_estate\": real_estate_amt};\n}"
 		  }
 		],
 		"edges": [
 		  {
-			"id": "f2b94379-7857-44f2-a97d-cd31efc9532a",
-			"sourceId": "bdac87d8-af3d-46c0-b05f-991f2763305b",
+			"id": "02a4f2a9-cd82-49cd-b05a-211ae7eafb9c",
+			"sourceId": "9c391113-f1da-4ff5-a7e5-60ffdd085631",
 			"type": "edge",
-			"targetId": "dc9ad02c-5b29-4494-9213-a7d1e96ef08d"
+			"targetId": "c2a2a88e-cd09-4634-a1bd-95890c885b23"
 		  },
 		  {
-			"id": "9721c9f8-fe6f-479b-933b-b9b14bcca78f",
-			"sourceId": "dc9ad02c-5b29-4494-9213-a7d1e96ef08d",
+			"id": "15e4d9b0-685e-4d16-bf87-561bc3c92838",
+			"sourceId": "c2a2a88e-cd09-4634-a1bd-95890c885b23",
 			"type": "edge",
-			"targetId": "0b69293c-e0df-49a6-9f13-f33a7157e56e"
+			"targetId": "e68d88a3-573c-402f-81e8-872a6c4b85e2"
 		  }
 		]
-	}
+	  }
 	`
 
 	var Params = map[string]interface{}{
-		"MonthlyCashInflow": 10,
+		"MonthlyCashInflow": "100",
 	}
 
+	gorulesEvaluate(decision, Params)
+}
+
+func gorulesEvaluate(decisionString string, params map[string]interface{}) {
 	var result DecisionGraphResponse
-	ParamsString, _ := json.Marshal(Params)
+	paramsString, _ := json.Marshal(params)
 	lol := time.Now()
-	res := C.evaluate(C.CString(decision), C.CString(string(ParamsString)))
+	res := C.evaluate(C.CString(decisionString), C.CString(string(paramsString)))
 	fmt.Println(time.Since(lol))
 	resString := C.GoString(res)
 	err := json.Unmarshal([]byte(resString), &result)
@@ -114,3 +85,4 @@ func main() {
 	}
 	fmt.Println(result)
 }
+
